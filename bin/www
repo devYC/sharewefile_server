@@ -1,29 +1,55 @@
-const app = require("../app");
+const { Server } = require("socket.io");
+const { createServer } = require("http");
 const debug = require("debug")("sharewe-server:server");
-const http = require("http");
+const cors = require("cors");
+const app = require("../app");
 
-const port = normalizePort(process.env.PORT || "3001");
-app.set("port", port);
+app.use(
+  cors({
+    origin: ["http://192.168.219.103:3000", "http://localhost:3000"],
+  })
+);
 
-const server = http.createServer(app);
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://192.168.219.103:3000", "http://localhost:3000"],
+  },
+});
 
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
+const port = process.env.PORT || "3001";
+httpServer.listen(port, () => {
+  console.log("listening on *:" + port);
+});
+httpServer.on("error", onError);
+httpServer.on("listening", onListening);
 
-function normalizePort(val) {
-  const port = parseInt(val, 10);
+io.on("connection", socket => {
+  console.log("server socket is connected", socket.id);
+  socket.on("client 1 SDP", msg1 => {
+    console.log(`${msg1}`);
+    io.emit("receiving from client 1", msg1, socket.id);
+  });
+  socket.on("client 2 SDP", msg2 => {
+    console.log(`${msg2}`);
+    io.emit("receiving from client 2", msg2);
+  });
+  socket.on("URL", url => {
+    console.log(`${url}`);
+    io.emit("URL", url);
+  });
+});
 
-  if (isNaN(port)) {
-    return val;
-  }
-
-  if (port >= 0) {
-    return port;
-  }
-
-  return false;
-}
+io.on("connection", socket => {
+  socket.on("client 1 ICE", msg => {
+    console.log(`${msg}`);
+    io.emit("ICE from client 1", msg);
+  });
+  socket.on("client 2 ICE", msg3 => {
+    console.log(`${msg3}`);
+    io.emit("ICE from client 2", msg3);
+  });
+});
 
 function onError(error) {
   if (error.syscall !== "listen") {
@@ -47,7 +73,7 @@ function onError(error) {
 }
 
 function onListening() {
-  const addr = server.address();
+  const addr = httpServer.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
