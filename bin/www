@@ -6,14 +6,14 @@ const app = require("../app");
 
 app.use(
   cors({
-    origin: ["https://192.168.2.111:3000", "https://localhost:3000"],
+    origin: ["http://172.30.1.74:3000", "http://localhost:3000"],
   })
 );
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ["https://192.168.2.111:3000", "https://localhost:3000"],
+    origin: ["http://172.30.1.74:3000", "http://localhost:3000"],
   },
 });
 
