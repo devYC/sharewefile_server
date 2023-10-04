@@ -36,13 +36,13 @@ httpServer.on("listening", onListening);
 
 io.on("connection", socket => {
   console.log("server socket is connected", socket.id);
-  socket.on("client 1 SDP", msg1 => {
-    console.log(`${msg1}`);
-    io.emit("receiving from client 1", msg1, socket.id);
+  socket.on("sender SDP", offer => {
+    console.log(`${offer}`);
+    io.emit("receiving sender SDP", offer, socket.id);
   });
-  socket.on("client 2 SDP", msg2 => {
-    console.log(`${msg2}`);
-    io.emit("receiving from client 2", msg2);
+  socket.on("receiver SDP", answer => {
+    console.log(`${answer}`);
+    io.emit("receiving receiver SDP", answer);
   });
   socket.on("URL", url => {
     console.log(`${url}`);
@@ -51,13 +51,13 @@ io.on("connection", socket => {
 });
 
 io.on("connection", socket => {
-  socket.on("client 1 ICE", msg => {
-    console.log(`${msg}`);
-    io.emit("ICE from client 1", msg);
+  socket.on("sender ICE", senderice => {
+    console.log(`${senderice}`);
+    io.emit("receiving sender ICE", senderice);
   });
-  socket.on("client 2 ICE", msg3 => {
-    console.log(`${msg3}`);
-    io.emit("ICE from client 2", msg3);
+  socket.on("receiver ICE", receiverice => {
+    console.log(`${receiverice}`);
+    io.emit("receiving receiver ICE", receiverice);
   });
 });
 
