@@ -1,0 +1,25 @@
+name: sharewe-server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: excusting remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.REMOTE_IP}}
+          username: ${{secrets.REMOTE_USER}}
+          key: ${{secrets.REMOTE_PRIVATE_KEY}}
+          port: ${{secrets.REMOTE_SSH_PORT}}
+          script: cd /home/ubuntu/sharewe/sharewe-server
+            git pull sharewe main
+            pm2 kill
+            npm i
+            npm run pm2

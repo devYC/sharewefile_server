@@ -7,7 +7,6 @@ const app = require("../app");
 app.use(
   cors({
     origin: [
-      "http://172.30.1.74:3000",
       "http://localhost:3000",
       "http://sharewefile.com",
       "http://www.sharewefile.com",
@@ -19,7 +18,6 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: [
-      "http://172.30.1.74:3000",
       "http://localhost:3000",
       "http://sharewefile.com",
       "http://www.sharewefile.com",
